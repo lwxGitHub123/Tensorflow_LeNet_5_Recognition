@@ -58,7 +58,9 @@ def evaluate(X_test, y_test_lable, My_Yd):
                 print(My_test_pred[i])
 
 
-                if My_test_pred[i] == 1:
+                if My_test_pred[i] == 0:
+                    My_test_pred1.append(0)
+                elif My_test_pred[i] == 1:
                     My_test_pred1.append(1)
                     print("A=")
                 elif My_test_pred[i] == 2:
@@ -150,10 +152,10 @@ def main(argv=None):
     # 自己手寫的20個數字
     My_X = np.zeros((20, 784), dtype=int)
     # 自己手寫的20個數字對應的期望數字
-    #My_Yd = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9], dtype=int)
-    My_Yd_OneHot = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19], dtype=int)
+    My_Yd = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0], dtype=int)
+    #My_Yd_OneHot = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19], dtype=int)
     #My_Yd_OneHot = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9], dtype=int)
-    My_Yd =[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+    #My_Yd =[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 
     # 輸入20個手寫數字圖檔28x28=784 pixel，
     Input_Numer = [0] * 20
@@ -167,7 +169,7 @@ def main(argv=None):
     Input_Numer[7] = "D:/liudongbo/dataset/recognition/7/mnist_test_17.jpg"
     Input_Numer[8] = "D:/liudongbo/dataset/recognition/8/mnist_test_84.jpg"
     Input_Numer[9] = "D:/liudongbo/dataset/recognition/9/mnist_test_9.jpg"
-    Input_Numer[10] = "D:/liudongbo/dataset/recognition/9/zhouyuwei2.jpg"
+    Input_Numer[10] = "D:/liudongbo/dataset/recognition/9/zhangzhiqiang1.jpg"
     Input_Numer[11] = "D:/liudongbo/dataset/recognition/8/mnist_test_1415.jpg"
     Input_Numer[12] = "D:/liudongbo/dataset/recognition/7/mnist_test_702.jpg"
     Input_Numer[13] = "D:/liudongbo/dataset/recognition/6/mnist_test_568.jpg"
@@ -176,7 +178,7 @@ def main(argv=None):
     Input_Numer[16] = "D:/liudongbo/dataset/recognition/3/mnist_test_548.jpg" #"D:/liudongbo/dataset/recognition/alh/dGVlbiBzcGlyaXQudHRm.png"
     Input_Numer[17] = "D:/liudongbo/dataset/recognition/2/mnist_test_477.jpg" #"D:/liudongbo/dataset/recognition/alh/Q2FuYWRpYW5QaG90b2dyYXBoZXIub3Rm.png"
     Input_Numer[18] = "D:/liudongbo/dataset/recognition/1/mnist_test_168.jpg" #"D:/liudongbo/dataset/recognition/alh/TGltZXJpY2stRGVtaUJvbGQub3Rm.png"
-    Input_Numer[19] = "D:/liudongbo/dataset/recognition/alh/MDEtMDEtMDAudHRm.png"   #"D:/liudongbo/dataset/recognition/0/mnist_test_246.jpg"
+    Input_Numer[19] = "D:/liudongbo/dataset/recognition/0/mnist_test_246.jpg"  #"D:/liudongbo/dataset/recognition/alh/MDEtMDEtMDAudHRm.png"
     mms = MinMaxScaler()
     for i in range(20):  # read 20 digits picture
         img = cv2.imread(Input_Numer[i], 0)  # Gray
@@ -200,7 +202,7 @@ def main(argv=None):
 
 
     My_test = mms.fit_transform(My_X)
-    My_label_ohe = lenet5_train.encode_labels(My_Yd_OneHot, 20)
+    My_label_ohe = lenet5_train.encode_labels(My_Yd, 10)
     ##============================
 
     evaluate(My_test, My_label_ohe, My_Yd)
