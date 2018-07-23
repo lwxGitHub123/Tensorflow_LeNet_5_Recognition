@@ -11,6 +11,9 @@ from matplotlib import pyplot as plt
 from PIL import Image
 import PIL.ImageOps  as ImageOps
 
+MODEL_SELECT = 0
+MODEL_DIR_NUMBER = "D:/liudongbo/models/Mnist_models/lenet5_model"
+MODEL_DIR_LETTER = "D:/liudongbo/models/Mnist_models/lenet5_model"
 
 img_num = [0] * 20
 
@@ -46,7 +49,12 @@ def evaluate(X_test, y_test_lable, My_Yd):
         saver = tf.train.Saver()
         # saver = tf.train.import_meta_graph("./mnist/mnist_model.meta")
         with tf.Session() as sess:
-            saver.restore(sess, "D:/liudongbo/models/Mnist_models/lenet5_model")
+            if MODEL_SELECT == 0:
+                MODEL_DIR = MODEL_DIR_NUMBER
+            else :
+                MODEL_DIR = MODEL_DIR_LETTER
+
+            saver.restore(sess, MODEL_DIR)
 
             My_test_pred = sess.run(pred_max, feed_dict={x: test_xs[:20]})
             print("期望值：", My_Yd)
@@ -57,50 +65,75 @@ def evaluate(X_test, y_test_lable, My_Yd):
                 print("My_test_pred[i] =")
                 print(My_test_pred[i])
 
-
-                if My_test_pred[i] == 0:
-                    My_test_pred1.append(0)
-                elif My_test_pred[i] == 1:
-                    My_test_pred1.append(1)
-                    print("A=")
-                elif My_test_pred[i] == 2:
-                    My_test_pred1.append(2)
-                elif My_test_pred[i] == 3:
-                    My_test_pred1.append(3)
-                elif My_test_pred[i] == 4:
-                    My_test_pred1.append(4)
-                elif My_test_pred[i] == 5:
-                    My_test_pred1.append(5)
-                elif My_test_pred[i] == 6:
-                    My_test_pred1.append(6)
-                elif My_test_pred[i] == 7:
-                    My_test_pred1.append(7)
-                elif My_test_pred[i] == 8:
-                    My_test_pred1.append(8)
-                elif My_test_pred[i] == 9:
-                    My_test_pred1.append(9)
-                elif My_test_pred[i] == 10:
-                    My_test_pred1.append('A')
-                elif My_test_pred[i] == 11:
-                    My_test_pred1.append('B')
-                elif My_test_pred[i] == 12:
-                    My_test_pred1.append('C')
-                elif My_test_pred[i] == 13:
-                    My_test_pred1.append('D')
-                elif My_test_pred[i] == 14:
-                    My_test_pred1.append('E')
-                elif My_test_pred[i] == 15:
-                    My_test_pred1.append('F')
-                elif My_test_pred[i] == 16:
-                    My_test_pred1.append('G')
-                elif My_test_pred[i] == 17:
-                    My_test_pred1.append('H')
-                elif My_test_pred[i] == 18:
-                    My_test_pred1.append('I')
-                elif My_test_pred[i] == 19:
-                    My_test_pred1.append('J')
+                if MODEL_SELECT == 0:
+                   if My_test_pred[i] == 0:
+                      My_test_pred1.append(0)
+                   elif My_test_pred[i] == 1:
+                      My_test_pred1.append(1)
+                      print("A=")
+                   elif My_test_pred[i] == 2:
+                      My_test_pred1.append(2)
+                   elif My_test_pred[i] == 3:
+                      My_test_pred1.append(3)
+                   elif My_test_pred[i] == 4:
+                      My_test_pred1.append(4)
+                   elif My_test_pred[i] == 5:
+                      My_test_pred1.append(5)
+                   elif My_test_pred[i] == 6:
+                      My_test_pred1.append(6)
+                   elif My_test_pred[i] == 7:
+                      My_test_pred1.append(7)
+                   elif My_test_pred[i] == 8:
+                      My_test_pred1.append(8)
+                   elif My_test_pred[i] == 9:
+                      My_test_pred1.append(9)
+                   elif My_test_pred[i] == 10:
+                      My_test_pred1.append('A')
+                   elif My_test_pred[i] == 11:
+                      My_test_pred1.append('B')
+                   elif My_test_pred[i] == 12:
+                      My_test_pred1.append('C')
+                   elif My_test_pred[i] == 13:
+                      My_test_pred1.append('D')
+                   elif My_test_pred[i] == 14:
+                      My_test_pred1.append('E')
+                   elif My_test_pred[i] == 15:
+                      My_test_pred1.append('F')
+                   elif My_test_pred[i] == 16:
+                      My_test_pred1.append('G')
+                   elif My_test_pred[i] == 17:
+                      My_test_pred1.append('H')
+                   elif My_test_pred[i] == 18:
+                      My_test_pred1.append('I')
+                   elif My_test_pred[i] == 19:
+                      My_test_pred1.append('J')
+                   else:
+                      My_test_pred1.append('--')
                 else:
-                    My_test_pred1.append('--')
+                    if My_test_pred[i] == 0:
+                        My_test_pred1.append('A')
+                    elif My_test_pred[i] == 1:
+                        My_test_pred1.append('B')
+                        print("A=")
+                    elif My_test_pred[i] == 2:
+                        My_test_pred1.append('C')
+                    elif My_test_pred[i] == 3:
+                        My_test_pred1.append('D')
+                    elif My_test_pred[i] == 4:
+                        My_test_pred1.append('E')
+                    elif My_test_pred[i] == 5:
+                        My_test_pred1.append('F')
+                    elif My_test_pred[i] == 6:
+                        My_test_pred1.append('G')
+                    elif My_test_pred[i] == 7:
+                        My_test_pred1.append('H')
+                    elif My_test_pred[i] == 8:
+                        My_test_pred1.append('I')
+                    elif My_test_pred[i] == 9:
+                        My_test_pred1.append('J')
+                    else:
+                        My_test_pred1.append('--')
+
 
             print("預測值：", My_test_pred1)
             My_acc = sess.run(accuracy, feed_dict={x: test_xs, y_: y_test_lable})
@@ -152,25 +185,25 @@ def main(argv=None):
     # 自己手寫的20個數字
     My_X = np.zeros((20, 784), dtype=int)
     # 自己手寫的20個數字對應的期望數字
-    My_Yd = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0], dtype=int)
+    My_Yd = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9], dtype=int)
     #My_Yd_OneHot = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19], dtype=int)
     #My_Yd_OneHot = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9], dtype=int)
     #My_Yd =[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 
     # 輸入20個手寫數字圖檔28x28=784 pixel，
     Input_Numer = [0] * 20
-    Input_Numer[0] = "D:/liudongbo/dataset/recognition/0/mnist_test_3.jpg"
-    Input_Numer[1] = "D:/liudongbo/dataset/recognition/1/mnist_test_5.jpg"
-    Input_Numer[2] = "D:/liudongbo/dataset/recognition/2/mnist_test_1.jpg"
-    Input_Numer[3] = "D:/liudongbo/dataset/recognition/3/mnist_test_30.jpg"
-    Input_Numer[4] = "D:/liudongbo/dataset/recognition/4/mnist_test_19.jpg"
-    Input_Numer[5] = "D:/liudongbo/dataset/recognition/5/mnist_test_15.jpg"
-    Input_Numer[6] = "D:/liudongbo/dataset/recognition/6/mnist_test_21.jpg"
-    Input_Numer[7] = "D:/liudongbo/dataset/recognition/7/mnist_test_17.jpg"
-    Input_Numer[8] = "D:/liudongbo/dataset/recognition/8/mnist_test_84.jpg"
-    Input_Numer[9] = "D:/liudongbo/dataset/recognition/9/mnist_test_9.jpg"
-    Input_Numer[10] = "D:/liudongbo/dataset/recognition/9/zhangzhiqiang1.jpg"
-    Input_Numer[11] = "D:/liudongbo/dataset/recognition/8/mnist_test_1415.jpg"
+    Input_Numer[0] = "D:/liudongbo/dataset/Test/7_17/target011.jpg"   #"D:/liudongbo/dataset/recognition/0/mnist_test_3.jpg"     #"D:/liudongbo/dataset/recognition/alh/TGltZXJpY2stRGVtaUJvbGRDb25kSXRhLm90Zg==.png"
+    Input_Numer[1] = "D:/liudongbo/dataset/Test/7_17/target012.jpg"   #"D:/liudongbo/dataset/recognition/1/mnist_test_5.jpg"        #"D:/liudongbo/dataset/recognition/alh/MTIgQ29uY29yZGUgQm9sZCAwNzMxOS50dGY=.png"
+    Input_Numer[2] = "D:/liudongbo/dataset/Test/7_17/target110.jpg"   #"D:/liudongbo/dataset/recognition/2/mnist_test_1.jpg"    #"D:/liudongbo/dataset/recognition/alh/Q0NKaW1MZWUtQm9sZEl0YWxpYy50dGY=.png"
+    Input_Numer[3] = "D:/liudongbo/dataset/Test/7_17/target111.jpg"   #"D:/liudongbo/dataset/recognition/3/mnist_test_30.jpg"     #"D:/liudongbo/dataset/recognition/alh/Q2FuYWRpYW5QaG90b2dyYXBoZXIub3Rm.png"
+    Input_Numer[4] = "D:/liudongbo/dataset/Test/7_17/target112.jpg"   #"D:/liudongbo/dataset/recognition/4/mnist_test_19.jpg"    #"D:/liudongbo/dataset/recognition/alh/MDEtMDEtMDAudHRm.png"
+    Input_Numer[5] = "D:/liudongbo/dataset/Test/7_17/target121.jpg"   #"D:/liudongbo/dataset/recognition/5/mnist_test_15.jpg"
+    Input_Numer[6] = "D:/liudongbo/dataset/Test/7_17/target122.jpg"   #"D:/liudongbo/dataset/recognition/6/mnist_test_21.jpg"
+    Input_Numer[7] = "D:/liudongbo/dataset/Test/7_17/4.jpg"   #"D:/liudongbo/dataset/recognition/7/mnist_test_17.jpg"
+    Input_Numer[8] = "D:/liudongbo/dataset/Test/7_17/target313.jpg"   #"D:/liudongbo/dataset/recognition/8/8.jpg"
+    Input_Numer[9] = "D:/liudongbo/dataset/Test/7_17/target322.jpg"   #"D:/liudongbo/dataset/recognition/9/mnist_test_9.jpg"
+    Input_Numer[10] = "D:/liudongbo/dataset/Test/7_17/target323.jpg"  #"D:/liudongbo/dataset/recognition/9/9_07_13_03.jpg"
+    Input_Numer[11] = "D:/liudongbo/dataset/Test/20180719/9.jpg"      #"D:/liudongbo/dataset/recognition/9/mnist_test_9517.jpg"
     Input_Numer[12] = "D:/liudongbo/dataset/recognition/7/mnist_test_702.jpg"
     Input_Numer[13] = "D:/liudongbo/dataset/recognition/6/mnist_test_568.jpg"
     Input_Numer[14] = "D:/liudongbo/dataset/recognition/5/mnist_test_509.jpg"
@@ -188,7 +221,8 @@ def main(argv=None):
         #if  img.shape != (28,28) :
         #    img.resize(28,28)
 
-
+        print("i=")
+        print(i)
 
         print("img.shape =")
         print(img.shape)
