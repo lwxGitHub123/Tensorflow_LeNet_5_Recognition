@@ -5,8 +5,8 @@ import cv2
 from PIL import Image
 import os
 
-SOURCE_DATA_DIR = ""
-DESTINATION_DATA_DIR = ""
+SOURCE_DATA_DIR = "D:/liudongbo/dataset/train_set_02/"
+DESTINATION_DATA_DIR = "D:/liudongbo/dataset/train_set_2val"
 
 def  convertImage(imgPath):
 
@@ -14,8 +14,8 @@ def  convertImage(imgPath):
       print("im2=")
       print(im1)
       im2 = cv2.GaussianBlur(im1, (3, 3), 0)
-      im3 = cv2.threshold(im2,150,255,cv2.THRESH_BINARY_INV )
-      im4 = cv2.resize(im3[1],(28,28))
+      _,im3 = cv2.threshold(im2,150,255,cv2.THRESH_BINARY )
+      im4 = cv2.resize(im3,(28,28))
       print("im3=")
       print(im4)
       #cv2.imwrite("D:/liudongbo/dataset/9.jpg",im4)
