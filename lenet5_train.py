@@ -57,9 +57,9 @@ BATCH_SIZE = 100
 LEARNING_RATE_BASE = 0.01
 LEARNING_RATE_DECAY = 0.99
 REGULARIZATION_RATE = 0.0001
-TRAINING_STEPS = 5000
+TRAINING_STEPS = 20000
 MOVING_AVERAGE_DECAY = 0.99
-TRAIN_DATA_DIR = "D:/liudongbo/dataset/train_set_02/"   #"D:/liudongbo/dataset/notMNIST_large/"
+TRAIN_DATA_DIR = "D:/liudongbo/dataset/train_set_2val/"     #"D:/liudongbo/dataset/notMNIST_large/"
 MODEL_SAVE_PATH = "D:/liudongbo/models/Mnist_models/"
 MODEL_NAME = "lenet5_model"
 INPUT_NODE = 784
@@ -70,6 +70,7 @@ NUM_LABELS = 10
 display_step = 100
 learning_rate_flag=True
 BATCHNUMBER = 1
+data_path = 'train.tfrecords'
 
 
 def initVarible():
@@ -77,8 +78,10 @@ def initVarible():
     batch_idx = 0
     train_acc=[]
     # 定義輸出為4維矩陣的placeholder
-    x_ = tf.placeholder(tf.float32, [None, INPUT_NODE],name='x-input')
-    x = tf.reshape(x_, shape=[-1, 28, 28, 1])
+    # x_ = tf.placeholder(tf.float32, [None, INPUT_NODE],name='x-input')
+    # x = tf.reshape(x_, shape=[-1, 28, 28, 1])
+    x = tf.placeholder(tf.float32, [None, 28, 28, 1], name='x-input')
+
 
     y_ = tf.placeholder(tf.float32, [None, OUTPUT_NODE], name='y-input')
 
@@ -123,6 +126,7 @@ def train(X_train,y_train_lable,global_step, shuffle, batch_idx, loss, x, y_, ac
     else:
         learning_rate = 0.001 #Ashing test
     train_step = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss, global_step=global_step)
+    #train_step = tf.train.AdamOptimizer(learning_rate).minimize(loss, global_step=global_step)
 
     pretrained_model = None
     files = os.listdir(MODEL_SAVE_PATH)
@@ -236,55 +240,66 @@ def main(argv=None):
         saver = tf.train.Saver()
 
         with tf.Session() as sess:
-           tf.global_variables_initializer().run()
-           i = 0
-           dataFlag = 0
-           while i < totalPathNumbers :
-              image_paths = []
-              j = min(i+batchsize, totalPathNumbers)
-              while i < j:
-                  image_paths.append(train_image_path_list[i])
-                  i = i+1
-                  print("i=")
-                  print(i)
+           #tf.global_variables_initializer().run()
+              feature = {'train/image': tf.FixedLenFeature([], tf.string),
+                      'train/label': tf.FixedLenFeature([], tf.int64),
+                      'train/height': tf.FixedLenFeature([], tf.int64),
+                      'train/width': tf.FixedLenFeature([], tf.int64)}
+           # define a queue base on input filenames
+              filename_queue = tf.train.string_input_producer([data_path])
+           # define a tfrecords file reader
+              reader = tf.TFRecordReader()
+           # read in serialized example data
+              _, serialized_example = reader.read(filename_queue)
+           # decode example by feature
+              features = tf.parse_single_example(serialized_example, features=feature)
+           # img = tf.decode_raw(features['train/image'], tf.uint8)
+              image = tf.image.decode_jpeg(features['train/image'])
+              image = tf.image.convert_image_dtype(image,
+                                             dtype=tf.float32)  # convert dtype from unit8 to float32 for later resize
+              label = tf.cast(features['train/label'], tf.int64)
+              height = tf.cast(features['train/height'], tf.int32)
+              width = tf.cast(features['train/width'], tf.int32)
+           # restore image to [height, width, 3]
+              image = tf.reshape(image, [height, width, 1])
+          # resize
+              image = tf.image.resize_images(image, [28, 28])
+           # create bathch
+              images, labels = tf.train.shuffle_batch([image, label], batch_size=60000, capacity=80000, num_threads=1,
+                                                min_after_dequeue=100)  # capacity是队列的最大容量，num_threads是dequeue后最小的队列大小，num_threads是进行队列操作的线程数。
 
-              read_data_time_start = time.time()
+           # initialize global & local variables
+              init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
+              sess.run(init_op)
+           # create a coordinate and run queue runner objects
+              coord = tf.train.Coordinator()
+              threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-              image_datas, image_labels = rd.get_images_and_labels(image_paths)
+              for batch_index in range(1):
+                   batch_images, batch_labels = sess.run([images, labels])
+                   print("batch_images.shape=")
+                   print(batch_images.shape)
+                   print("batch_images=")
+                   print(batch_images)
 
-              read_data_time_duration = time.time() -read_data_time_start
-              read_data_time += read_data_time_duration
 
-              mms=MinMaxScaler()
-    #X_train=mms.fit_transform(X_train)
-    #X_test=mms.transform(X_test)
-
-              X_train1 = mms.fit_transform(image_datas)
-     #  X_test = mms.transform(test_image_datas)
-
-    #stdsc=StandardScaler()
-    #X_train=stdsc.fit_transform(X_train)
-    #X_test=stdsc.transform(X_test)
-
-    #y_train_lable = encode_labels(y_train,10)
-    #y_test_lable = encode_labels(y_test,10)
-
-              y_train_lable = image_labels
-     #  y_test_lable = test_image_labels
-
-              print("y_train_lable.shape=",y_train_lable.shape)
-     #  print("y_test_lable.shape=",y_test_lable.shape)
-    ##============================
-              if j == totalPathNumbers:
-               dataFlag = 1
+              mms = MinMaxScaler()
+              X_train = batch_images #mms.fit_transform(batch_images)
+              y_train_lable = encode_labels(batch_labels, 10)
+              print("y_train_lable.shape=", y_train_lable.shape)
 
               train_time_start = time.time()
-              train(X_train1,y_train_lable,global_step, shuffle,batch_idx, loss, x, y_, accuracy, train_acc,saver,sess)
+              train(X_train,y_train_lable,global_step, shuffle,batch_idx, loss, x, y_, accuracy, train_acc,saver,sess)
               duration_train_time  = time.time() - train_time_start
               train_time += duration_train_time
 
+              saver.save(sess, os.path.join(MODEL_SAVE_PATH, MODEL_NAME))
+        #close threads
+              coord.request_stop()
+              coord.join(threads)
+              sess.close()
 
-           saver.save(sess, os.path.join(MODEL_SAVE_PATH, MODEL_NAME))
+
     print('read paths Time %.3f\t' % (duration))
     print('Train Time %.3f\t' %(train_time))
     print('Read data Time %.3f\t' %(read_data_time))
